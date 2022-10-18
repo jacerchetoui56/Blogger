@@ -23,9 +23,13 @@
                     <div class="card-subtitle test-muted">
                         <%= article.createdAt.toLocaleDateString() %>
                     </div>
-                    <div class="card-text">
+                    <div class="card-text mb-2">
                         <%= article.description %>
                     </div>
+                    <a href="/articles/<%= article.slug %>" class="btn btn-primary">Read More</a>
+                    <form class="d-inline" action="/articles/<%=article.id%>?_method=DELETE" method="POST">
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
                 </div>
             </div>
 

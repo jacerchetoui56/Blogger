@@ -1,20 +1,21 @@
-// import dotenv from 'dotenv'
-// dotenv.config()
 import cors from 'cors'
-import 'express-async-errors'
 import express, { Application } from 'express'
 import ejs from 'ejs'
 import path from 'path'
 import mongoose from 'mongoose'
 import articleRouter from './routes/articles'
 import notFound from './errors/notFound'
-import ErrorHandlerMiddleware from './middlewares/errorHandler'
+import Article from './models/article.model'
+import methodOverride from 'method-override'
+
 
 const app : Application = express()
-const port = process.env.PORT || 5000
+const port = process.env.PORT || 5002
 app.use(cors())
 app.use(express.urlencoded({ extended : false }))
 app.use(express.json())
+app.use(methodOverride('_method'))
+
 
 app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'ejs')
@@ -22,22 +23,12 @@ app.set('view engine', 'ejs')
 
 app.use('/articles', articleRouter)
 
-app.get('/', (req, res)=> {
-    const articles = [{
-        title : 'test title', 
-        createdAt : new Date(),
-        description : "test description"
-    }, 
-    {
-        title : 'test title2', 
-        createdAt : new Date(),
-        description : "test description2"
-    }]
+app.get('/', async (req, res)=> {
+    const articles = await Article.find({}).sort({createdAt : -1})
     res.render('articles/index', {articles : articles})
 })
 
 app.use(notFound)
-app.use(ErrorHandlerMiddleware)
 
 const start= async () =>{
     try  {
